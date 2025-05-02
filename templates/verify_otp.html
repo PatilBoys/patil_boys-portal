@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white rounded-2xl shadow-2xl p-8">
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-6">Enter OTP for Patil Boys Hostel</h2>
+
+    <form action="/otp_login" method="POST" class="space-y-6">
+        <!-- OTP -->
+        <div>
+            <label for="otp" class="block text-sm font-semibold text-gray-700">Enter OTP</label>
+            <input type="text" id="otp" name="otp" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter OTP sent to your email">
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+            <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                Submit
+            </button>
+        </div>
+    </form>
+
+    <!-- Display flash messages -->
+    {% if message %}
+    <div class="mt-4 text-center text-red-600 font-semibold">
+        {{ message }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

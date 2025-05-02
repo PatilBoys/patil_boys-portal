@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white rounded-2xl shadow-2xl p-8">
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-6">Login to Patil Boys Hostel</h2>
+
+    <form action="/login" method="POST" class="space-y-6" onsubmit="return validateForm()">
+
+        <!-- User Type Selection -->
+        <div>
+            <label for="role" class="block text-sm font-semibold text-gray-700">I am a:</label>
+            <select id="role" name="role" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="togglePasswordField()">
+                <option value="">Select Role</option>
+                <option value="student">Student</option>
+                <option value="parent">Parent</option>
+                <option value="admin">Admin</option>
+            </select>
+            <p id="roleHelpText" class="mt-2 text-sm text-gray-500 hidden">Please select your role to proceed.</p>
+        </div>
+
+        <!-- Username / Email -->
+        <div>
+            <label for="username" class="block text-sm font-semibold text-gray-700">Username / Email</label>
+            <input type="text" id="username" name="username" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your registered email or username" aria-describedby="usernameHelp">
+            <small id="usernameHelp" class="text-xs text-gray-500">Enter the email or username associated with your account.</small>
+        </div>
+
+        <!-- Password (Visible only for Admin) -->
+        <div id="passwordField" style="display: none;">
+            <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
+            <input type="password" id="password" name="password" minlength="6" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your password">
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+            <button id="loginBtn" type="submit" disabled class="w-full bg-blue-300 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:bg-blue-400 active:bg-blue-500 focus:outline-none">
+                Login
+            </button>
+        </div>
+
+    </form>
+
+    <!-- Display flash messages -->
+    {% if message %}
+    <div aria-live="polite" class="mt-4 text-center {{ 'text-red-600' if 'Invalid' in message else 'text-green-600' }} font-semibold" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function togglePasswordField() {
+    var role = document.getElementById('role').value;
+    var passwordField = document.getElementById('passwordField');
+    var loginBtn = document.getElementById('loginBtn');
+    var roleHelpText = document.getElementById('roleHelpText');
+    var usernameField = document.getElementById('username');
+    var password = document.getElementById('password');
+    
+    // Enable/Disable Login Button based on Role
+    loginBtn.disabled = !role;
+    
+    // Toggle password field visibility for admin role
+    if (role === 'admin') {
+        passwordField.style.display = 'block';
+    } else {
+        passwordField.style.display = 'none';
+        password.value = ''; // Clear password field when switching role
+    }
+    
+    // Toggle role help text visibility
+    roleHelpText.style.display = role ? 'none' : 'block';
+}
+
+function validateForm() {
+    var role = document.getElementById('role').value;
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+    
+    // Ensure that all fields are valid
+    if (!role || !username) {
+        alert('Please fill in all required fields.');
+        return false;
+    }
+
+    // Admin role requires a password
+    if (role === 'admin' && !password) {
+        alert('Password is required for Admin login.');
+        return false;
+    }
+
+    // Basic email validation
+    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (role === 'student' || role === 'parent') {
+        if (!emailPattern.test(username)) {
+            alert('Please enter a valid email address.');
+            return false;
+        }
+    }
+
+    // Trigger animation for the login button
+    var loginBtn = document.getElementById('loginBtn');
+    loginBtn.innerHTML = "Logging in...";
+    loginBtn.disabled = true; // Disable button to prevent multiple clicks
+
+    // Simulate a network request (optional for demo purposes)
+    setTimeout(function() {
+        loginBtn.innerHTML = "Login"; // Reset the button text
+        loginBtn.disabled = false; // Re-enable the button after 2 seconds
+    }, 2000);
+
+    return true;
+}
+</script>
+
+{% endblock %}

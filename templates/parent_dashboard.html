@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-gray-50 p-6 rounded-lg shadow-lg mt-8">
+    <!-- Main Heading -->
+    <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-6">Parent Dashboard</h2>
+    
+    <!-- Subheading -->
+    <h3 class="text-xl font-semibold text-center text-gray-600 mb-4">
+        In/Out Entry for <span class="text-indigo-600">{{ student_name }}</span>
+    </h3>
+
+    <!-- Current Status -->
+    <div class="text-center mb-6">
+        <p class="text-lg font-medium">
+            Current Status:
+            <span class="
+                px-3 py-1 rounded-full
+                {% if current_status == 'HOSTEL' %} bg-green-100 text-green-700
+                {% elif current_status == 'Class' %} bg-blue-100 text-blue-700
+                {% elif current_status == 'OUT' %} bg-red-100 text-red-700
+                {% else %} bg-gray-100 text-gray-700
+                {% endif %}
+            ">
+                {{ current_status }}
+            </span>
+        </p>
+    </div>
+
+    <!-- Table Section -->
+    {% if child|length > 0 %}
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full border-collapse border border-gray-200 rounded-lg">
+                <thead class="bg-indigo-100 text-indigo-800">
+                    <tr>
+                        <th class="border px-4 py-2 text-left">Date</th>
+                        <th class="border px-4 py-2 text-left">Status</th>
+                        <th class="border px-4 py-2 text-left">Reason</th>
+                        <th class="border px-4 py-2 text-left">Expected Return</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in child %}
+                        <tr class="
+                            {% if entry['status'] == 'Checked In' %} bg-green-50
+                            {% elif entry['status'] == 'Checked Out' %} bg-red-50
+                            {% else %} bg-gray-50
+                            {% endif %}
+                        ">
+                            <td class="border px-4 py-2">{{ entry['check_in_time'] or 'N/A' }}</td>
+                            <td class="border px-4 py-2">{{ entry['status'] }}</td>
+                            <td class="border px-4 py-2">{{ entry['reason'] or 'N/A' }}</td>
+                            <td class="border px-4 py-2">{{ entry['expected_return'] or 'N/A' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center text-gray-500 mt-6">No records found for the student.</p>
+    {% endif %}
+</div>
+{% endblock %}

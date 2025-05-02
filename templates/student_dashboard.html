@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto mt-12 px-6 py-8 bg-white shadow-xl rounded-lg">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="mb-4">
+            {% for category, message in messages %}
+            <div class="p-4 text-white rounded-lg {{ 'bg-green-500' if category == 'success' else 'bg-red-500' }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Welcome Message -->
+    <div class="text-center border-b pb-4 mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-800">Welcome, <span id="student-name" class="text-indigo-600">{{ student_name }}</span>!</h1>
+    </div>
+
+    <!-- In/Out Entry Form -->
+    <form id="entry-form" action="/submit_in_out_details" method="POST" class="flex flex-col space-y-6">
+        <!-- Hidden input for in/out state -->
+        <input type="hidden" id="in-out-state" name="in_out" value="">
+
+        <!-- In/Out Buttons -->
+        <div class="flex justify-between items-center space-x-4">
+            <button type="button" id="in-button" class="w-full bg-green-600 text-white font-semibold py-4 rounded-lg focus:outline-none hover:bg-green-700">
+                Mark IN
+            </button>
+            <button type="button" id="out-button" class="w-full bg-red-600 text-white font-semibold py-4 rounded-lg focus:outline-none hover:bg-red-700">
+                Mark OUT
+            </button>
+        </div>
+
+        <!-- Reason Selection for "Out" -->
+        <div id="out-reason-container" class="hidden flex-col mt-6 space-y-4">
+            <label class="text-lg font-medium text-gray-700">Reason:</label>
+            <div class="flex space-x-4">
+                <label>
+                    <input type="radio" name="reason" value="Class" class="mr-2"> Class
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="Other" class="mr-2" id="other-reason-radio"> Other
+                </label>
+            </div>
+            <!-- Other Reason Textbox -->
+            <div id="other-reason-container" class="hidden flex-col mt-4 space-y-2">
+                <label for="other-reason" class="text-gray-700 text-sm font-medium">Please specify:</label>
+                <input type="text" id="other-reason" name="other_reason" class="rounded border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2" placeholder="Enter your reason">
+            </div>
+        </div>
+
+        <!-- Expected Return -->
+        <div id="expected-return-container" class="hidden mt-6">
+            <label for="expected-return" class="text-lg font-medium text-gray-700">Expected Return:</label>
+            <input type="datetime-local" id="expected-return" name="expected_return" class="rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+        </div>
+
+        <!-- Submit Button (initially hidden) -->
+        <button type="submit" id="submit-button" class="hidden bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 focus:outline-none">
+            Submit
+        </button>
+    </form>
+</div>
+
+<script>
+    const inButton = document.getElementById('in-button');
+    const outButton = document.getElementById('out-button');
+    const inOutState = document.getElementById('in-out-state');
+    const outReasonContainer = document.getElementById('out-reason-container');
+    const expectedReturnContainer = document.getElementById('expected-return-container');
+    const entryForm = document.getElementById('entry-form');
+    const submitButton = document.getElementById('submit-button');
+    const otherReasonRadio = document.getElementById('other-reason-radio');
+    const otherReasonContainer = document.getElementById('other-reason-container');
+
+    // Mark IN: Automatically submit the form
+    inButton.addEventListener('click', () => {
+        inOutState.value = 'In';
+        outReasonContainer.classList.add('hidden');
+        expectedReturnContainer.classList.add('hidden');
+        submitButton.classList.add('hidden'); // Ensure Submit button stays hidden
+        entryForm.submit(); // Automatically submit
+    });
+
+    // Mark OUT: Show additional fields and display Submit button
+    outButton.addEventListener('click', () => {
+        inOutState.value = 'Out';
+        outReasonContainer.classList.remove('hidden');
+        expectedReturnContainer.classList.remove('hidden');
+        submitButton.classList.remove('hidden'); // Remove hidden class
+        submitButton.style.display = 'block'; // Explicitly show Submit button
+    });
+
+    // Show/Hide "Other Reason" field
+    otherReasonRadio.addEventListener('change', () => {
+        if (otherReasonRadio.checked) {
+            otherReasonContainer.classList.remove('hidden');
+        } else {
+            otherReasonContainer.classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}
